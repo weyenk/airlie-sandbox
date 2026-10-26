@@ -22,6 +22,31 @@ class RomanTest(unittest.TestCase):
         self.assertEqual(to_roman(58), "LVIII")
         self.assertIsInstance(to_roman(1994), str)
 
+    def test_to_roman_rejects_less_than_one(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            to_roman(0)
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            to_roman(-5)
+
+    def test_to_roman_rejects_greater_than_3999(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            to_roman(4000)
+
+    def test_to_roman_rejects_non_int(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            to_roman(4.5)
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            to_roman("IV")
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            to_roman(None)
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            to_roman([])
+        # bool is an int subclass but has no canonical numeral; reject it explicitly.
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            to_roman(True)
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            to_roman(False)
+
     def test_unittest_discovery_and_version_still_passes(self) -> None:
         # Recursion guard: the gate re-runs this very test file, so a nested
         # run skips itself instead of spawning another gate forever.
@@ -41,7 +66,7 @@ class RomanTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, output)
         self.assertIn("OK", output)
         # -q prints no passing test names, so the run count is the discovery
-        # proof: 1 version test + 2 roman tests = 3 after this layer.
+        # proof: 1 version test + 5 roman tests = 6 after this layer.
         ran = re.search(r"Ran (\d+) tests?", output)
         self.assertIsNotNone(ran, output)
         self.assertGreaterEqual(int(ran.group(1)), 3, output)

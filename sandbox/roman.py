@@ -17,8 +17,13 @@ _TABLE = (
 )
 
 
+_INVALID = "not a valid Roman numeral"
+
+
 def to_roman(n: int) -> str:
     """Convert an integer 1..3999 to its canonical uppercase Roman numeral."""
+    if isinstance(n, bool) or not isinstance(n, int) or not 1 <= n <= 3999:
+        raise ValueError(f"{n!r} is {_INVALID}")
     parts = []
     for symbol, value in _TABLE:
         while n >= value:
