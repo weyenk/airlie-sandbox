@@ -20,6 +20,19 @@ _TABLE = (
 _INVALID = "not a valid Roman numeral"
 
 
+def from_roman(s: str) -> int:
+    """Parse a Roman numeral string to its integer value."""
+    values = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    total = 0
+    for i, ch in enumerate(s):
+        value = values[ch]
+        if i + 1 < len(s) and value < values[s[i + 1]]:
+            total -= value
+        else:
+            total += value
+    return total
+
+
 def to_roman(n: int) -> str:
     """Convert an integer 1..3999 to its canonical uppercase Roman numeral."""
     if isinstance(n, bool) or not isinstance(n, int) or not 1 <= n <= 3999:
