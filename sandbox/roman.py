@@ -21,8 +21,12 @@ _INVALID = "not a valid Roman numeral"
 
 
 def from_roman(s: str) -> int:
-    """Parse a Roman numeral string to its integer value."""
+    """Parse a canonical uppercase Roman numeral string to its integer value."""
+    if not isinstance(s, str) or not s:
+        raise ValueError(f"{s!r} is {_INVALID}")
     values = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    if any(ch not in values for ch in s):
+        raise ValueError(f"{s!r} is {_INVALID}")
     total = 0
     for i, ch in enumerate(s):
         value = values[ch]
@@ -30,6 +34,8 @@ def from_roman(s: str) -> int:
             total -= value
         else:
             total += value
+    if not 1 <= total <= 3999 or to_roman(total) != s:
+        raise ValueError(f"{s!r} is {_INVALID}")
     return total
 
 
