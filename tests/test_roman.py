@@ -35,5 +35,40 @@ class ToRomanTest(unittest.TestCase):
             sandbox.roman.to_roman("x")
 
 
+class FromRomanTest(unittest.TestCase):
+    def test_from_roman_mcmxciv_returns_1994(self) -> None:
+        self.assertEqual(sandbox.roman.from_roman("MCMXCIV"), 1994)
+
+    def test_from_roman_mmmcmxcix_returns_3999(self) -> None:
+        self.assertEqual(sandbox.roman.from_roman("MMMCMXCIX"), 3999)
+
+    def test_from_roman_iv_returns_4(self) -> None:
+        self.assertEqual(sandbox.roman.from_roman("IV"), 4)
+
+    def test_from_roman_iiii_raises_invalid(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            sandbox.roman.from_roman("IIII")
+
+    def test_from_roman_ic_raises_invalid(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            sandbox.roman.from_roman("IC")
+
+    def test_from_roman_empty_raises_invalid(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            sandbox.roman.from_roman("")
+
+    def test_from_roman_abc_raises_invalid(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            sandbox.roman.from_roman("abc")
+
+    def test_round_trip_is_identity_for_all_1_to_3999(self) -> None:
+        for n in range(1, 4000):
+            self.assertEqual(sandbox.roman.from_roman(sandbox.roman.to_roman(n)), n)
+
+    def test_from_roman_non_str_raises_invalid(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not a valid Roman numeral"):
+            sandbox.roman.from_roman(1994)
+
+
 if __name__ == "__main__":
     unittest.main()
