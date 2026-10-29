@@ -26,3 +26,15 @@ def to_roman(n: int) -> str:
         parts.append(letters * (n // value))
         n %= value
     return "".join(parts)
+
+
+def from_roman(s: str) -> int:
+    """Return the unique n in 1..3999 with to_roman(n) == s, raising ValueError otherwise."""
+    if not isinstance(s, str):
+        raise ValueError(f"expected a str, got {type(s).__name__}")
+    if s == "":
+        raise ValueError("expected a non-empty Roman numeral")
+    inverse = {to_roman(n): n for n in range(1, 4000)}
+    if s not in inverse:
+        raise ValueError(f"{s!r} is not a canonical Roman numeral for 1..3999")
+    return inverse[s]
