@@ -1,6 +1,8 @@
+import itertools
 import unittest
 
-from sandbox.roman import to_roman
+import sandbox.roman
+from sandbox.roman import from_roman, to_roman
 
 
 class RomanTest(unittest.TestCase):
@@ -22,7 +24,40 @@ class RomanTest(unittest.TestCase):
 
     def test_to_roman_output_uses_only_roman_characters(self) -> None:
         for n in (1, 4, 9, 40, 90, 400, 900, 3999):
-            self.assertLessEqual(set(to_roman(n)), set("IVXLCDM"))
+            self.assertTrue(set(to_roman(n)) <= set("IVXLCDM"))
+
+    def test_module_exposes_to_roman_and_from_roman(self) -> None:
+        self.assertTrue(callable(sandbox.roman.to_roman))
+        self.assertTrue(callable(sandbox.roman.from_roman))
+
+    def test_to_roman_output_is_valid_and_round_trips(self) -> None:
+        for n in (1, 4, 9, 40, 90, 400, 900, 3999):
+            self.assertTrue(set(to_roman(n)) <= set("IVXLCDM"))
+            self.assertEqual(from_roman(to_roman(n)), n)
+
+    def test_from_roman_round_trips_to_roman(self) -> None:
+        for n in (1, 4, 9, 40, 90, 400, 900, 3999):
+            self.assertEqual(from_roman(to_roman(n)), n)
+
+    def test_from_roman_accepts_exactly_the_valid_outputs(self) -> None:
+        for n in range(1, 4000):
+            self.assertEqual(from_roman(to_roman(n)), n)
+
+    def test_from_roman_rejects_all_short_malformed_strings_and_samples_longer_ones(self) -> None:
+        valid = {to_roman(n): n for n in range(1, 4000)}
+        alphabet = "IVXLCDM"
+        for length in range(5):
+            for s in ("", *("".join(p) for p in itertools.product(alphabet, repeat=length))):
+                if s in valid:
+                    self.assertEqual(from_roman(s), valid[s])
+                else:
+                    with self.assertRaises(ValueError) as ctx:
+                        from_roman(s)
+                    self.assertNotEqual(str(ctx.exception), "")
+        for s in ("mcmxciv", "A"):
+            with self.assertRaises(ValueError) as ctx:
+                from_roman(s)
+            self.assertNotEqual(str(ctx.exception), "")
 
 
 if __name__ == "__main__":
