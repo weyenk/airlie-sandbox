@@ -30,3 +30,16 @@ def to_roman(n: int) -> str:
         count, n = divmod(n, value)
         parts.append(letters * count)
     return "".join(parts)
+
+
+_NUMERAL_TO_VALUE = {to_roman(n): n for n in range(0, 4000)}
+
+
+def from_roman(s: str) -> int:
+    """Return the integer whose Roman numeral is s, or 0 for ''."""
+    if not isinstance(s, str):
+        raise ValueError(f"{s!r} is not a str")
+    try:
+        return _NUMERAL_TO_VALUE[s]
+    except KeyError:
+        raise ValueError(f"{s!r} is a malformed numeral") from None
