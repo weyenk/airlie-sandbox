@@ -18,3 +18,24 @@ def to_roman(n: int) -> str:
             parts.append(symbol)
             n -= value
     return "".join(parts)
+
+
+def from_roman(s: str) -> int:
+    """Return the integer for a canonical Roman numeral (inverse of to_roman)."""
+    if not isinstance(s, str):
+        raise ValueError(f"s must be a str, got {type(s).__name__}")
+    if not s:
+        raise ValueError("s must not be empty")
+    values = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    if any(char not in values for char in s):
+        raise ValueError(f"s contains characters outside IVXLCDM: {s!r}")
+    total = 0
+    for i, char in enumerate(s):
+        value = values[char]
+        if i + 1 < len(s) and values[s[i + 1]] > value:
+            total -= value
+        else:
+            total += value
+    if not 1 <= total <= 3999 or to_roman(total) != s:
+        raise ValueError(f"s is not a canonical Roman numeral: {s!r}")
+    return total
