@@ -32,10 +32,19 @@ def to_roman(n: int) -> str:
 
 
 def from_roman(s: str) -> int:
-    """Return the sum of the letter values in s (lenient, no subtractive rules)."""
+    """Return the value of canonical Roman numeral s in 1..3999."""
     if not s:
         raise ValueError("s must not be empty")
     for char in s:
         if char not in _LETTER_VALUES:
             raise ValueError(f"invalid character {char!r} in Roman numeral")
-    return sum(_LETTER_VALUES[c] for c in s)
+    total = 0
+    for i, char in enumerate(s):
+        value = _LETTER_VALUES[char]
+        if i + 1 < len(s) and _LETTER_VALUES[s[i + 1]] > value:
+            total -= value
+        else:
+            total += value
+    if not 1 <= total <= 3999 or to_roman(total) != s:
+        raise ValueError(f"{s!r} is not a canonical Roman numeral in 1..3999")
+    return total
